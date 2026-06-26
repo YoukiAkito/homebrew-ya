@@ -1,0 +1,37 @@
+name: Update Homebrew Cask
+
+on:
+  release:
+    types: [published] # 当你在GitHub上发布新Release时触发
+
+jobs:
+  update-homebrew:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout your tap repository
+        uses: actions/checkout@v4
+        with:
+          repository: YoukiAkito/homebrew-ya 
+          token: ${{ secrets.HOMEBREW_TAP_GITHUB_TOKEN }} 
+
+      - name: Update cask file
+        env:
+          NEW_VERSION: ${{ github.event.release.tag_name }} # 获取新发布的版本号
+        run: |
+          # 下载新版本的dmg文件并计算sha256
+          DMG_URL="https://github.com/Achilng/floral-notepaper/releases/download/${NEW_VERSION}/floral-notepaper_${NEW_VERSION}_aarch64.dmg"
+          curl -L -o /tmp/app.dmg "$DMG_URL"
+          NEW_SHA=$(shasum -a 256 /tmp/app.dmg | cut -d ' ' -f 1)
+
+          # 更新Cask文件中的version和sha256
+          CASK_FILE="Casks/floral-notepaper.rb"
+          sed -i "s/version \".*\"/version \"${NEW_VERSION#v}\"/" "$CASK_FILE" # 移除版本号前的'v'
+          sed -i "s/sha256 \".*\"/sha256 \"$NEW_SHA\"/" "$CASK_FILE"
+
+      - name: Commit and push changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add Casks/floral-notepaper.rb
+          git commit -m "chore: update floral-notepaper to ${{ github.event.release.tag_name }}"
+          git push
