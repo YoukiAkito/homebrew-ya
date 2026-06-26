@@ -5,6 +5,8 @@ cask "floral-notepaper" do
   desc "轻量优雅的跨平台桌面便签工具，支持 Markdown 编辑与预览"
   homepage "https://github.com/Achilng/floral-notepaper"
 
+  depends_on macos: ">= :catalina"
+
   on_arm do
     sha256 "5f73f0748e943f72e12e09389219cae987ccc806ce19d9e0c5dd36f926bf906f"
     url "https://github.com/Achilng/floral-notepaper/releases/download/v#{version}/floral-notepaper_#{version}_aarch64.dmg"
@@ -15,7 +17,6 @@ cask "floral-notepaper" do
     url "https://github.com/Achilng/floral-notepaper/releases/download/v#{version}/floral-notepaper_#{version}_x64.dmg"
   end
 
-  # 安装 .app
   app "花笺.app"
 
   zap trash: [
