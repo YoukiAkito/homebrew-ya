@@ -16,7 +16,7 @@ cask "floral-notepaper" do
   end
 
   # 安装 .app
-  app "Floral Notepaper.app"
+  app "花笺.app"
 
   zap trash: [
     "~/Library/Application Support/floral-notepaper",
